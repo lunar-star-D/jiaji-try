@@ -27,7 +27,7 @@ st.markdown("""
 
 # ================= 1. 填上你的钥匙 (需修改这里) =================
 client = OpenAI(
-    api_key="", 
+    api_key=st.secrets["api_key"], 
     base_url="https://api.siliconflow.cn/v1"
 )
 
