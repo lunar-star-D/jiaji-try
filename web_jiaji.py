@@ -3,6 +3,7 @@ from openai import OpenAI
 import json
 import os
 import datetime
+import re
 
 # ================= 页面基础设置 =================
 st.set_page_config(page_title="刘夜", page_icon="🤖")
@@ -103,15 +104,23 @@ if user_input or st.session_state.get("force_ai_speak", False):
         st.session_state.force_ai_speak = False
 
     # 生成 AI 的回复
-    with st.chat_message("assistant"):
-        message_placeholder = st.empty() 
-        full_response = ""
-        
-        response = client.chat.completions.create(
-            model="Qwen/Qwen3-8B",
-            messages=st.session_state.messages,
-            stream=True
-        )
+   with st.chat_message("assistant"):
+    message_placeholder = st.empty() 
+    full_response = ""
+    
+    # ====== 核心修复：每次回话前，重新获取当前真实时间 ======
+    latest_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # 复制一份聊天记录，并在发给AI前，偷偷把时间改成最新的
+    temp_messages = st.session_state.messages.copy()
+    if temp_messages[0]["role"] == "system":
+        temp_messages[0]["content"] = re.sub(r"【当前时间】：.*?\n", f"【当前时间】：{latest_time}\n", temp_messages[0]["content"])
+    
+    response = client.chat.completions.create(
+        model="Qwen/Qwen3-8B",
+        messages=temp_messages, 
+        stream=True
+    )
         
         for chunk in response:
             if chunk.choices[0].delta.content:
