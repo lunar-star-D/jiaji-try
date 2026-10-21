@@ -108,7 +108,7 @@ if user_input or st.session_state.get("force_ai_speak", False):
         full_response = ""
         
         # ====== 核心修复：每次回话前，重新获取当前真实时间 ======
-      latest_time = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
+        latest_time = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S")
         
         # 复制一份聊天记录，并在发给AI前，偷偷把时间改成最新的
         temp_messages = st.session_state.messages.copy()
